@@ -24,11 +24,15 @@ def content(request, title):
         request_pattern = re.compile(request.GET.get('q'))
         item_list = util.list_entries()
         print(item_list)
+        
         for item in item_list:
             print(item, request_pattern.search(item))
             if request_pattern.search(item) == None:
                 item_list.remove(item)
-        print(item_list)
+
+        if item_list:
+            return render(request, 'encyclopedia/search.html', {
+                'entries': item_list})
     
     return render(request, 'encyclopedia/error404.html', {
         'title':title})

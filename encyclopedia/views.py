@@ -5,8 +5,9 @@ from markdown import markdown
 from . import util
 from django import forms
 import re
+from . import forms
+
 def index(request):
-    
     if request.GET.get('q') != None:
         return content(request, request.GET.get('q'))
     else:
@@ -16,20 +17,19 @@ def index(request):
 def content(request, title):
     if util.get_entry(title):
         content = markdown(util.get_entry(title))
-        
         return render(request, 'encyclopedia/content.html', {
             'title':title, 'content': content})
-    
     else:
         request_pattern = re.compile(request.GET.get('q'), re.IGNORECASE)
         item_list = util.list_entries()
         print(item_list)
-        
         item_list = list(filter(request_pattern.search, item_list))
-
         if item_list:
             return render(request, 'encyclopedia/search.html', {
                 'entries': item_list})
-    
     return render(request, 'encyclopedia/error404.html', {
         'title':title})
+
+def create_new_page(request):
+    form = forms.CreateNewPage()
+    return render(request, 'encyclopedia/createnewpage.html', {'form': form.as_p()})

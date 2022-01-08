@@ -37,9 +37,9 @@ textarea {
     margin-top: 5px;
 }
 
-textclass{
+.textclass{
     margin-left: auto;
     margin-right: auto;
     height: 10vh;
-    width: 750%;
+    width: 75%;
 }

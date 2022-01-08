@@ -21,14 +21,11 @@ def content(request, title):
             'title':title, 'content': content})
     
     else:
-        request_pattern = re.compile(request.GET.get('q'))
+        request_pattern = re.compile(request.GET.get('q'), re.IGNORECASE)
         item_list = util.list_entries()
         print(item_list)
         
-        for item in item_list:
-            print(item, request_pattern.search(item))
-            if request_pattern.search(item) == None:
-                item_list.remove(item)
+        item_list = list(filter(request_pattern.search, item_list))
 
         if item_list:
             return render(request, 'encyclopedia/search.html', {

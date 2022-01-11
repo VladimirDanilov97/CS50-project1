@@ -1,6 +1,6 @@
 from django import forms
-from django.shortcuts import render
-from django.http import HttpResponse
+from django.shortcuts import redirect, render 
+from django.http import HttpResponseRedirect
 from markdown import markdown
 from . import util
 from django import forms
@@ -18,6 +18,8 @@ def index(request):
 
 def display_content(request, title):
     if util.get_entry(title):
+        if request.method == 'POST':
+            return HttpResponseRedirect(f'{title}/edit')
         content = markdown(util.get_entry(title))
         return render(request, 'encyclopedia/content.html', {
             'title':title, 'content': content})
@@ -46,4 +48,8 @@ def create_new_page(request):
                 exist = False
         return render(request, 'encyclopedia/createnewpage.html', {'form': form.as_p(), 'exist': exist})        
         
+    return render(request, 'encyclopedia/createnewpage.html', {'form': forms.CreateNewPage().as_p(), 'exist': exist})
+
+def editpage(request, title):
+    exist = True
     return render(request, 'encyclopedia/createnewpage.html', {'form': forms.CreateNewPage().as_p(), 'exist': exist})

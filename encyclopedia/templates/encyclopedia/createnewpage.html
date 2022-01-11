@@ -5,10 +5,18 @@
 {% endblock %}
 
 {% block body %}
-    <form acton='#', method='post'>
+    <form acton='#', method='POST'>
         {% csrf_token %}
-        {{form}}
-        <input class='btn btn-success' type="button" name='submit', value="Save">
+        {% if exist %}
+            {{form}}
+            <input class='btn btn-success' type="submit" name='submit', value="Save">
+        {% else %}
+            <div class='alert alert-danger'>
+                This entry exists already
+            </div>
+            {{form}}
+            <input class='btn btn-success' type="submit" name='submit', value="Save">
+        {% endif %}
     </form>
 
 {% endblock %}

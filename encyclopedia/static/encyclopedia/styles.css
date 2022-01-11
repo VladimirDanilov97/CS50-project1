@@ -12,22 +12,29 @@ h1 {
     padding-top: 20px;
 }
 
-
-
 .input-group-text{
     background-color: rgba(226, 228, 228, 0.247);
     text-align: left;
+    display: inline; 
 }
 
-.textclass{
-    margin-left: auto;
-    
-    height: 15vh;
-    width: 800px;
+#id_content{
+    display: block;
+    width: 90%;
+
+}
+.btn{
+    width: 100px; 
+    align-items: right;
+}
+
+.alert{
+    width: 210px;
+    text-align: center;
 }
 
 .main {
-    padding: 10px;
+    padding: 20px;
 }
 
 .search {
@@ -39,10 +46,12 @@ h1 {
 .sidebar {
     background-color: #f0f0f0;
     height: 100vh;
-    padding: 20px;
+    padding-left: 45px;
+    padding-top: 20px;
 }
 
 .sidebar h2 {
     margin-top: 5px;
+    
 }
 

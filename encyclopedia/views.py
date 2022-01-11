@@ -6,15 +6,17 @@ from . import util
 from django import forms
 import re
 from . import forms
+from django.forms.widgets import Textarea
+
 
 def index(request):
     if request.GET.get('q') != None:
-        return content(request, request.GET.get('q'))
+        return display_content(request, request.GET.get('q'))
     else:
         return render(request, "encyclopedia/index.html", {
     "entries": util.list_entries(), })
 
-def content(request, title):
+def display_content(request, title):
     if util.get_entry(title):
         content = markdown(util.get_entry(title))
         return render(request, 'encyclopedia/content.html', {
@@ -22,7 +24,6 @@ def content(request, title):
     else:
         request_pattern = re.compile(request.GET.get('q'), re.IGNORECASE)
         item_list = util.list_entries()
-        print(item_list)
         item_list = list(filter(request_pattern.search, item_list))
         if item_list:
             return render(request, 'encyclopedia/search.html', {
@@ -31,5 +32,18 @@ def content(request, title):
         'title':title})
 
 def create_new_page(request):
-    form = forms.CreateNewPage()
-    return render(request, 'encyclopedia/createnewpage.html', {'form': form.as_p()})
+    exist = True
+    if request.method == 'POST':
+        form = forms.CreateNewPage(request.POST)
+        if form.is_valid():
+            title = form.cleaned_data.get('title')
+            if not util.get_entry(title):
+                content = form.cleaned_data.get('content')
+                with open(f'./entries/{title}.md', 'w') as entry:
+                    entry.write(f'#{title}')
+                    entry.write(content)
+            else:
+                exist = False
+        return render(request, 'encyclopedia/createnewpage.html', {'form': form.as_p(), 'exist': exist})        
+        
+    return render(request, 'encyclopedia/createnewpage.html', {'form': forms.CreateNewPage().as_p(), 'exist': exist})

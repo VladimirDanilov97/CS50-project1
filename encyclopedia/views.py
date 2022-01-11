@@ -52,4 +52,13 @@ def create_new_page(request):
 
 def editpage(request, title):
     exist = True
-    return render(request, 'encyclopedia/createnewpage.html', {'form': forms.CreateNewPage().as_p(), 'exist': exist})
+    content = util.get_entry(title)
+    if request.method == 'POST':
+        form = forms.CreateNewPage(request.POST)
+        if form.is_valid():
+            title = form.cleaned_data.get('title')
+            content = form.cleaned_data.get('content')
+            with open(f'./entries/{title}.md', 'w') as entry:
+                entry.write(content.replace('\n','') )
+        return render(request, 'encyclopedia/createnewpage.html', {'form': form.as_p(), 'exist': exist})      
+    return render(request, 'encyclopedia/createnewpage.html', {'form': forms.CreateNewPage(initial={'title': title, 'content': content}).as_p(), 'exist': exist})

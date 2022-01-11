@@ -40,7 +40,7 @@ def create_new_page(request):
             if not util.get_entry(title):
                 content = form.cleaned_data.get('content')
                 with open(f'./entries/{title}.md', 'w') as entry:
-                    entry.write(f'#{title}')
+                    entry.write(f'#{title} \n')
                     entry.write(content)
             else:
                 exist = False

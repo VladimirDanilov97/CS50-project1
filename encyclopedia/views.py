@@ -44,8 +44,8 @@ def create_new_page(request):
                 with open(f'./entries/{title}.md', 'w') as entry:
                     entry.write(f'#{title} \n')
                     entry.write(content)
-            else:
-                exist = False
+                return HttpResponseRedirect(f'../{title}')
+            exist = False
         return render(request, 'encyclopedia/createnewpage.html', {'form': form.as_p(), 'exist': exist})        
         
     return render(request, 'encyclopedia/createnewpage.html', {'form': forms.CreateNewPage().as_p(), 'exist': exist})
@@ -57,8 +57,8 @@ def editpage(request, title):
         form = forms.CreateNewPage(request.POST)
         if form.is_valid():
             title = form.cleaned_data.get('title')
-            content = form.cleaned_data.get('content')
+            content = form.cleaned_data.get('content').replace('\n','') 
             with open(f'./entries/{title}.md', 'w') as entry:
-                entry.write(content.replace('\n','') )
-        return render(request, 'encyclopedia/createnewpage.html', {'form': form.as_p(), 'exist': exist})      
+                entry.write(content)
+        return HttpResponseRedirect(f'../{title}')
     return render(request, 'encyclopedia/createnewpage.html', {'form': forms.CreateNewPage(initial={'title': title, 'content': content}).as_p(), 'exist': exist})

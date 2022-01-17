@@ -7,7 +7,7 @@ from django import forms
 import re
 from . import forms
 from django.forms.widgets import Textarea
-
+from random import choice
 
 def index(request):
     if request.GET.get('q') != None:
@@ -24,14 +24,15 @@ def display_content(request, title):
         return render(request, 'encyclopedia/content.html', {
             'title':title, 'content': content})
     else:
-        request_pattern = re.compile(request.GET.get('q'), re.IGNORECASE)
-        item_list = util.list_entries()
-        item_list = list(filter(request_pattern.search, item_list))
-        if item_list:
-            return render(request, 'encyclopedia/search.html', {
-                'entries': item_list})
-    return render(request, 'encyclopedia/error404.html', {
-        'title':title})
+        try:
+            request_pattern = re.compile(request.GET.get('q'), re.IGNORECASE)
+            item_list = list(filter(request_pattern.search, util.list_entries()))
+            if item_list:
+                return render(request, 'encyclopedia/search.html', {
+                    'entries': item_list})
+        except:
+            return render(request, 'encyclopedia/error404.html', {
+                'title':title})
 
 def create_new_page(request):
     exist = True
@@ -61,4 +62,9 @@ def editpage(request, title):
             with open(f'./entries/{title}.md', 'w') as entry:
                 entry.write(content)
         return HttpResponseRedirect(f'../{title}')
-    return render(request, 'encyclopedia/createnewpage.html', {'form': forms.CreateNewPage(initial={'title': title, 'content': content}).as_p(), 'exist': exist})
+    return render(request, 'encyclopedia/createnewpage.html', 
+    {'form': forms.CreateNewPage(initial={'title': title, 'content': content}).as_p(), 'exist': exist})
+
+def randompage(request):
+    title = choice(util.list_entries())
+    return HttpResponseRedirect(f'../{title}')

@@ -7,7 +7,7 @@
 {% block body %}
         
     {{ content|safe }}
-    <form method='post'>
+    <form method='post' >
         {% csrf_token %}
         <button style='position: absolute; right: 50px; top: 10px;'class = 'btn btn-primary', type="submit">Edit</button>
     </form>

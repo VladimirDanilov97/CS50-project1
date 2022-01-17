@@ -1,6 +1,7 @@
 from django import forms
 from django.shortcuts import redirect, render 
-from django.http import HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect
+from django.urls import reverse 
 from markdown import markdown
 from . import util
 from django import forms
@@ -17,9 +18,10 @@ def index(request):
     "entries": util.list_entries(), })
 
 def display_content(request, title):
+    print(536464654464564564564664564645464)
     if util.get_entry(title):
         if request.method == 'POST':
-            return HttpResponseRedirect(f'{title}/edit')
+            return HttpResponseRedirect(reverse(editpage, args=(title,)))
         content = markdown(util.get_entry(title))
         return render(request, 'encyclopedia/content.html', {
             'title':title, 'content': content})
@@ -52,6 +54,7 @@ def create_new_page(request):
     return render(request, 'encyclopedia/createnewpage.html', {'form': forms.CreateNewPage().as_p(), 'exist': exist})
 
 def editpage(request, title):
+    print(121212121212121212121212)
     exist = True
     content = util.get_entry(title)
     if request.method == 'POST':
@@ -61,10 +64,10 @@ def editpage(request, title):
             content = form.cleaned_data.get('content').replace('\n','') 
             with open(f'./entries/{title}.md', 'w') as entry:
                 entry.write(content)
-        return HttpResponseRedirect(f'../{title}')
+        return HttpResponseRedirect(reverse('content', args=(title,)))
     return render(request, 'encyclopedia/createnewpage.html', 
     {'form': forms.CreateNewPage(initial={'title': title, 'content': content}).as_p(), 'exist': exist})
 
 def randompage(request):
     title = choice(util.list_entries())
-    return HttpResponseRedirect(f'../{title}')
+    return HttpResponseRedirect(reverse('content', args=(title,)))
